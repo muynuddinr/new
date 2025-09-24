@@ -23,8 +23,8 @@ const PricingPage = () => {
   const pricingTiers = [
     {
       name: "STARTER PLAN",
-      monthlyPrice: "$36",
-      yearlyPrice: "$30",
+      monthlyPrice: { USD: "$36", EUR: "€31", GBP: "£27", INR: "₹3,182", AED: "د.إ132" },
+      yearlyPrice: { USD: "$30.00", EUR: "€25.44", GBP: "£22.20", INR: "₹2,652", AED: "د.إ110.10" },
       savings: "79% cheaper than Salesforce",
       description: "Perfect for Small Businesses (1-5 Technicians)",
       features: [
@@ -44,8 +44,8 @@ const PricingPage = () => {
     },
     {
       name: "PROFESSIONAL PLAN",
-      monthlyPrice: "$72",
-      yearlyPrice: "$60",
+      monthlyPrice: { USD: "$72", EUR: "€61", GBP: "£53", INR: "₹6,365", AED: "د.إ264" },
+      yearlyPrice: { USD: "$60.00", EUR: "€50.88", GBP: "£44.40", INR: "₹5,304", AED: "د.إ220.20" },
       savings: "59% cheaper than Salesforce",
       description: "Perfect for 6-15 Technicians",
       features: [
@@ -63,8 +63,8 @@ const PricingPage = () => {
     },
     {
       name: "ENTERPRISE PLAN",
-      monthlyPrice: "$120",
-      yearlyPrice: "$100",
+      monthlyPrice: { USD: "$120", EUR: "€102", GBP: "£89", INR: "₹10,608", AED: "د.إ440" },
+      yearlyPrice: { USD: "$100.00", EUR: "€84.80", GBP: "£74.00", INR: "₹8,840", AED: "د.إ367.00" },
       savings: "31% cheaper than Salesforce",
       description: "Perfect for 16+ Technicians",
       features: [
@@ -205,7 +205,7 @@ const PricingPage = () => {
                   <div className="flex justify-between items-center p-4 bg-gray-850 bg-opacity-50 rounded-xl backdrop-blur-sm">
                     <span className="text-gray-300">Starter Plan</span>
                     <div className="text-right">
-                      <span className="font-bold text-xl">{billingCycle === 'monthly' ? pricingTiers[0].monthlyPrice : pricingTiers[0].yearlyPrice}</span>
+                      <span className="font-bold text-xl">{billingCycle === 'monthly' ? pricingTiers[0].monthlyPrice.USD : pricingTiers[0].yearlyPrice.USD}</span>
                       <span className="text-gray-400 text-sm">/month</span>
                       {billingCycle === 'yearly' && <div className="text-gray-400 text-xs">billed annually</div>}
                     </div>
@@ -213,7 +213,7 @@ const PricingPage = () => {
                   <div className="flex justify-between items-center p-4 bg-gray-850 bg-opacity-50 rounded-xl backdrop-blur-sm">
                     <span className="text-gray-300">Professional Plan</span>
                     <div className="text-right">
-                      <span className="font-bold text-xl">{billingCycle === 'monthly' ? pricingTiers[1].monthlyPrice : pricingTiers[1].yearlyPrice}</span>
+                      <span className="font-bold text-xl">{billingCycle === 'monthly' ? pricingTiers[1].monthlyPrice.USD : pricingTiers[1].yearlyPrice.USD}</span>
                       <span className="text-gray-400 text-sm">/month</span>
                       {billingCycle === 'yearly' && <div className="text-gray-400 text-xs">billed annually</div>}
                     </div>
@@ -221,7 +221,7 @@ const PricingPage = () => {
                   <div className="flex justify-between items-center p-4 bg-gray-850 bg-opacity-50 rounded-xl backdrop-blur-sm">
                     <span className="text-gray-300">Enterprise Plan</span>
                     <div className="text-right">
-                      <span className="font-bold text-xl">{billingCycle === 'monthly' ? pricingTiers[2].monthlyPrice : pricingTiers[2].yearlyPrice}</span>
+                      <span className="font-bold text-xl">{billingCycle === 'monthly' ? pricingTiers[2].monthlyPrice.USD : pricingTiers[2].yearlyPrice.USD}</span>
                       <span className="text-gray-400 text-sm">/month</span>
                       {billingCycle === 'yearly' && <div className="text-gray-400 text-xs">billed annually</div>}
                     </div>
@@ -266,11 +266,39 @@ const PricingPage = () => {
                   </div>
                 )}
                 <h3 className="text-2xl font-bold mb-4">{plan.name}</h3>
-                <div className="mb-2">
-                  <span className="text-4xl font-bold">{billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice}</span>
-                  <span className="text-gray-400">/month</span>
-                  {billingCycle === 'yearly' && <div className="text-gray-400 text-sm mt-1">billed annually</div>}
+                
+                {/* Currency Toggle */}
+                <div className="flex justify-center mb-4">
+                  <div className="inline-flex bg-gray-700 bg-opacity-50 backdrop-blur-sm rounded-lg p-1 border border-gray-600">
+                    <button className={`px-3 py-1 rounded-md text-xs transition-all ${billingCycle === 'monthly' ? 'bg-blue-500 text-white' : 'text-gray-300'}`}>
+                      Monthly
+                    </button>
+                    <button className={`px-3 py-1 rounded-md text-xs transition-all ${billingCycle === 'yearly' ? 'bg-blue-500 text-white' : 'text-gray-300'}`}>
+                      Yearly
+                    </button>
+                  </div>
                 </div>
+                
+                {/* Pricing Table */}
+                <div className="mb-6 overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-gray-700">
+                        <th className="text-left py-2 text-gray-400">Currency</th>
+                        <th className="text-right py-2 text-gray-400">Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice).map(([currency, price], i) => (
+                        <tr key={currency} className={i % 2 === 0 ? 'bg-gray-850 bg-opacity-30' : ''}>
+                          <td className="py-2 text-gray-300">{currency}</td>
+                          <td className="py-2 text-right font-medium">{price}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                
                 <div className="text-blue-400 text-sm mb-6 flex items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.2 6.5 10.266a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clipRule="evenodd" />
