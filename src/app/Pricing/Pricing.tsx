@@ -270,10 +270,16 @@ const PricingPage = () => {
                 {/* Currency Toggle */}
                 <div className="flex justify-center mb-4">
                   <div className="inline-flex bg-gray-700 bg-opacity-50 backdrop-blur-sm rounded-lg p-1 border border-gray-600">
-                    <button className={`px-3 py-1 rounded-md text-xs transition-all ${billingCycle === 'monthly' ? 'bg-blue-500 text-white' : 'text-gray-300'}`}>
+                    <button 
+                      className={`px-3 py-1 rounded-md text-xs transition-all ${billingCycle === 'monthly' ? 'bg-blue-500 text-white' : 'text-gray-300'}`}
+                      onClick={() => setBillingCycle('monthly')}
+                    >
                       Monthly
                     </button>
-                    <button className={`px-3 py-1 rounded-md text-xs transition-all ${billingCycle === 'yearly' ? 'bg-blue-500 text-white' : 'text-gray-300'}`}>
+                    <button 
+                      className={`px-3 py-1 rounded-md text-xs transition-all ${billingCycle === 'yearly' ? 'bg-blue-500 text-white' : 'text-gray-300'}`}
+                      onClick={() => setBillingCycle('yearly')}
+                    >
                       Yearly
                     </button>
                   </div>
@@ -354,7 +360,7 @@ const PricingPage = () => {
           </div>
           
           {activeTab === 'pricing' && (
-            <div className="bg-gray-900 bg-opacity-70 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-800 shadow-lg" data-aos="fade-up" data-aos-delay="100">
+            <div className="bg-gray-900 bg-opacity-70 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-800 shadow-lg" data-aos="fade-up" data-aos-delay="100}>
               <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-6">
                 <h3 className="text-2xl font-bold">Market Positioning Analysis</h3>
                 <p className="text-gray-400">See how Fielduo compares to the competition</p>
