@@ -7,6 +7,7 @@ const PricingPage = () => {
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [activeTab, setActiveTab] = useState('pricing');
   const [isVisible, setIsVisible] = useState(false);
+  const [selectedCurrency, setSelectedCurrency] = useState('USD');
   
   useEffect(() => {
     // Initialize AOS
@@ -19,6 +20,14 @@ const PricingPage = () => {
     
     setIsVisible(true);
   }, []);
+
+  const currencies = [
+    { code: 'USD', symbol: '$', name: 'US Dollar' },
+    { code: 'EUR', symbol: '€', name: 'Euro' },
+    { code: 'GBP', symbol: '£', name: 'British Pound' },
+    { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
+    { code: 'AED', symbol: 'د.إ', name: 'UAE Dirham' }
+  ];
 
   const pricingTiers = [
     {
@@ -106,6 +115,11 @@ const PricingPage = () => {
     { scenario: "Growing Service Business (10 technicians)", fielduo: "$72/month", alternative: "$1,050/month ($105 × 10)", monthlySavings: "$978", annualSavings: "$11,736", threeYearROI: "$35,208" },
     { scenario: "Enterprise Service Operation (25 technicians)", fielduo: "$120/month", alternative: "$4,375/month ($175 × 25)", monthlySavings: "$4,255", annualSavings: "$51,060", threeYearROI: "$153,180" }
   ];
+
+  const getCurrentPrice = (plan) => {
+    const priceObj = billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice;
+    return priceObj[selectedCurrency] || priceObj.USD;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white relative overflow-hidden pt-20">
@@ -251,6 +265,25 @@ const PricingPage = () => {
             <h2 className="text-4xl md:text-5xl font-bold mb-4" data-aos="fade-down" data-aos-delay="100">Pricing Tiers</h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto" data-aos="fade-down" data-aos-delay="200">Choose the plan that fits your business needs</p>
           </div>
+
+          {/* Currency Selector */}
+          <div className="flex justify-center mb-8" data-aos="fade-up">
+            <div className="bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-lg p-2 border border-gray-700">
+              <label htmlFor="currency-select" className="text-sm text-gray-400 mr-2">Select Currency:</label>
+              <select 
+                id="currency-select"
+                value={selectedCurrency}
+                onChange={(e) => setSelectedCurrency(e.target.value)}
+                className="bg-gray-900 border border-gray-700 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {currencies.map(currency => (
+                  <option key={currency.code} value={currency.code}>
+                    {currency.code} - {currency.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {pricingTiers.map((plan, index) => (
@@ -267,17 +300,33 @@ const PricingPage = () => {
                 )}
                 <h3 className="text-2xl font-bold mb-4">{plan.name}</h3>
                 
-                {/* Currency Toggle */}
-                <div className="flex justify-center mb-4">
+                {/* Currency Display */}
+                <div className="text-center mb-6">
+                  <div className="flex items-center justify-center mb-2">
+                    <span className="text-4xl font-bold">{getCurrentPrice(plan)}</span>
+                    <span className="text-gray-400 ml-2">/month</span>
+                  </div>
+                  {billingCycle === 'yearly' && (
+                    <div className="text-green-400 text-sm font-medium">
+                      Save 17% with annual billing
+                    </div>
+                  )}
+                  <div className="text-gray-400 text-sm mt-1">
+                    {selectedCurrency} - {currencies.find(c => c.code === selectedCurrency)?.name}
+                  </div>
+                </div>
+                
+                {/* Billing Toggle */}
+                <div className="flex justify-center mb-6">
                   <div className="inline-flex bg-gray-700 bg-opacity-50 backdrop-blur-sm rounded-lg p-1 border border-gray-600">
                     <button 
-                      className={`px-3 py-1 rounded-md text-xs transition-all ${billingCycle === 'monthly' ? 'bg-blue-500 text-white' : 'text-gray-300'}`}
+                      className={`px-4 py-2 rounded-md text-sm transition-all ${billingCycle === 'monthly' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:text-white'}`}
                       onClick={() => setBillingCycle('monthly')}
                     >
                       Monthly
                     </button>
                     <button 
-                      className={`px-3 py-1 rounded-md text-xs transition-all ${billingCycle === 'yearly' ? 'bg-blue-500 text-white' : 'text-gray-300'}`}
+                      className={`px-4 py-2 rounded-md text-sm transition-all ${billingCycle === 'yearly' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:text-white'}`}
                       onClick={() => setBillingCycle('yearly')}
                     >
                       Yearly
@@ -285,33 +334,13 @@ const PricingPage = () => {
                   </div>
                 </div>
                 
-                {/* Pricing Table */}
-                <div className="mb-6 overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-gray-700">
-                        <th className="text-left py-2 text-gray-400">Currency</th>
-                        <th className="text-right py-2 text-gray-400">Price</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.entries(billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice).map(([currency, price], i) => (
-                        <tr key={currency} className={i % 2 === 0 ? 'bg-gray-850 bg-opacity-30' : ''}>
-                          <td className="py-2 text-gray-300">{currency}</td>
-                          <td className="py-2 text-right font-medium">{price}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                
-                <div className="text-blue-400 text-sm mb-6 flex items-center">
+                <div className="text-blue-400 text-sm mb-6 flex items-center justify-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.2 6.5 10.266a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clipRule="evenodd" />
                   </svg>
                   {plan.savings}
                 </div>
-                <p className="text-gray-300 mb-6">{plan.description}</p>
+                <p className="text-gray-300 mb-6 text-center">{plan.description}</p>
                 
                 <ul className="space-y-4 mb-8">
                   {plan.features.map((feature, i) => (

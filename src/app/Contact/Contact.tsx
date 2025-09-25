@@ -9,7 +9,8 @@ const ContactPage = () => {
   const contactDetails = [
     { icon: MapPin, title: "Production Office", lines: ["2261 Market Street STE 86773", "San Francisco, CA 94114"] },
     { icon: Mail, title: "Email Us", lines: ["sales@fielduo.com"] },
-    { icon: Phone, title: "Call Us", lines: ["+1 (415) 200 5240", "+91 96296 27092"] },
+    { icon: Phone, title: "Sales", lines: ["US: +1 (415) 915 7065", "IND: +91 962 962 7092"] },
+    { icon: Phone, title: "Support", lines: ["+1 (415) 200 5240"] },
   ];
 
   const [submitting, setSubmitting] = useState(false)
